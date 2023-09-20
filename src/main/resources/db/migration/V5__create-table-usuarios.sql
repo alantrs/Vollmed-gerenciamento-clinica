@@ -1,4 +1,4 @@
-create table ususarios(
+create table usuarios(
 
     id bigint auto_increment primary key,
     nome varchar(100),
