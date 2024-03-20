@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
@@ -23,13 +24,8 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
             """)
     Medico buscarMedicoAleatorio(LocalDateTime dataHoraConsulta, Especialidade especialidade);
 
-    @Query("""
-            SELECT m.ativo
-            FROM Medico m
-            WHERE 
-            m.id = :id
-            """)
-    Boolean findAtivoById(Long idMedico);
+    @Query("SELECT m.ativo FROM Medico m WHERE m.id = :id")
+    Boolean findAtivoById(@Param("id") Long id);
 
-    Boolean existsByMedicoIdAndDataHoraConsulta(Long idMedico, LocalDateTime data);
+
 }
