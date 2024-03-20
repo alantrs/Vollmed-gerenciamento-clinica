@@ -17,14 +17,21 @@ import java.nio.file.AccessDeniedException;
 public class TratadorDeErros {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity tratarErro404() {
-        return ResponseEntity.notFound().build();
+    public ResponseEntity tratarErro404(EntityNotFoundException ex) {
+        var erros = ex.getMessage();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erros);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity tratarErro400(MethodArgumentNotValidException ex) {
         var erros = ex.getFieldErrors();
         return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new).toList());
+    }
+
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity tratarErroRegraDeNegocio(ValidacaoException ex) {
+        var erro = ex.getMessage();
+        return ResponseEntity.badRequest().body(erro);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
