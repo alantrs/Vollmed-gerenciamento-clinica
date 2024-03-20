@@ -28,11 +28,14 @@ public class ConsultaService {
     public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados){
         Paciente paciente = buscarPaciente(dados.idPaciente());
         Medico medico = buscarMedico(dados);
+        if (medico == null){
+            throw new ValidacaoException("Nenhum médico disponível nessa data");
+        }
 
         validadores.forEach(v -> v.validar(dados));
 
         Consulta consulta = new Consulta(null, medico, paciente, dados.dataHoraConsulta());
-        consultaRepository.save(consulta);
+        //consultaRepository.save(consulta);
         return new DadosDetalhamentoConsulta(consulta);
     }
 
