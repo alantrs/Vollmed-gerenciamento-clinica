@@ -57,4 +57,7 @@ public class ConsultaService {
         return medicoRepository.buscarMedicoAleatorio(dados.dataHoraConsulta(), dados.especialidade());
     }
 
+    public void cancelar(DadosCancelamentoConsulta dados) {
+
+    }
 }
