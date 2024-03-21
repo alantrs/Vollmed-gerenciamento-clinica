@@ -1,8 +1,8 @@
 package med.voll.api.domain.consulta;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.xml.bind.ValidationException;
 import med.voll.api.domain.consulta.validacoes.ValidadorAgendamentoConsulta;
+import med.voll.api.domain.consulta.validacoes.ValidadorCancelamentoConsulta;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.Paciente;
@@ -24,7 +24,10 @@ public class ConsultaService {
     private PacienteRepository pacienteRepository;
 
     @Autowired
-    private List<ValidadorAgendamentoConsulta> validadores;
+    private List<ValidadorAgendamentoConsulta> validadoresAgendamento;
+    @Autowired
+    private List<ValidadorCancelamentoConsulta> validadoresCancelamento;
+
     public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados){
         Paciente paciente = buscarPaciente(dados.idPaciente());
         Medico medico = buscarMedico(dados);
@@ -32,10 +35,10 @@ public class ConsultaService {
             throw new ValidacaoException("Nenhum médico disponível nessa data");
         }
 
-        validadores.forEach(v -> v.validar(dados));
+        validadoresAgendamento.forEach(v -> v.validar(dados));
 
         Consulta consulta = new Consulta(null, medico, paciente, dados.dataHoraConsulta());
-        //consultaRepository.save(consulta);
+        consultaRepository.save(consulta);
         return new DadosDetalhamentoConsulta(consulta);
     }
 
@@ -57,4 +60,8 @@ public class ConsultaService {
         return medicoRepository.buscarMedicoAleatorio(dados.dataHoraConsulta(), dados.especialidade());
     }
 
+    public void cancelar(DadosCancelamentoConsulta dados) {
+        validadoresCancelamento.forEach(v -> v.validar(dados));
+        consultaRepository.deleteById(dados.idConsulta());
+    }
 }
